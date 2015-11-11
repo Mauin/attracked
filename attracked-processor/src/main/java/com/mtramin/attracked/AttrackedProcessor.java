@@ -2,7 +2,9 @@ package com.mtramin.attracked;
 
 import com.google.auto.service.AutoService;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -54,6 +56,7 @@ public class AttrackedProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        Map<TypeElement, BindingClass> classes = new HashMap<>();
 
         for (Element element : roundEnv.getElementsAnnotatedWith(Event.class)) {
             try {
@@ -63,6 +66,10 @@ public class AttrackedProcessor extends AbstractProcessor {
                     return false;
                 }
 
+                TypeElement typeElement = (TypeElement) element;
+                BindingClass bindingClass = getOrCreateBinding(classes, typeElement);
+
+                System.out.printf("TEST");
                 // TODO generate stuff!
             } catch (Exception e) {
                 error(element, "Unable to generate Analytics Event.\n\n%s", e.getMessage());
@@ -70,6 +77,21 @@ public class AttrackedProcessor extends AbstractProcessor {
         }
 
         return true;
+    }
+
+    private BindingClass getOrCreateBinding(Map<TypeElement, BindingClass> classes, TypeElement typeElement) {
+        BindingClass bindingClass = classes.get(typeElement);
+        if (bindingClass != null) {
+            return bindingClass;
+        }
+
+        String targetClass = typeElement.getQualifiedName().toString();
+        String packageName = elementUtils.getPackageOf(typeElement).getQualifiedName().toString();
+        String className = targetClass.substring(packageName.length() + 1).replace('.', '$') + "$$Attracked";
+
+        bindingClass = new BindingClass(className, targetClass, packageName);
+        classes.put(typeElement, bindingClass);
+        return null;
     }
 
     private void error(Element e, String msg, Object... args) {

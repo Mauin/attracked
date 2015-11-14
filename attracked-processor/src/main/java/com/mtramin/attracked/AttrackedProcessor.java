@@ -68,12 +68,19 @@ public class AttrackedProcessor extends AbstractProcessor {
 
                 TypeElement typeElement = (TypeElement) element;
                 BindingClass bindingClass = getOrCreateBinding(classes, typeElement);
+                bindingClass.parseBindingData(typeElement);
 
-                System.out.printf("TEST");
-                // TODO generate stuff!
+                classes.put(typeElement, bindingClass);
+
             } catch (Exception e) {
                 error(element, "Unable to generate Analytics Event.\n\n%s", e.getMessage());
             }
+        }
+
+        System.out.println("Done analyzing classes. Found " + classes.entrySet().size() + " annotated classes.");
+
+        for (BindingClass bindingClass : classes.values()) {
+            bindingClass.writeToFiler(filer);
         }
 
         return true;
@@ -90,8 +97,7 @@ public class AttrackedProcessor extends AbstractProcessor {
         String className = targetClass.substring(packageName.length() + 1).replace('.', '$') + "$$Attracked";
 
         bindingClass = new BindingClass(className, targetClass, packageName);
-        classes.put(typeElement, bindingClass);
-        return null;
+        return bindingClass;
     }
 
     private void error(Element e, String msg, Object... args) {

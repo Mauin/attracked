@@ -2,6 +2,7 @@ package com.mtramin.attracked;
 
 import com.google.auto.service.AutoService;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -62,8 +63,7 @@ public class AttrackedProcessor extends AbstractProcessor {
             try {
                 System.out.printf("Element " + element.toString());
                 if (element.getKind() != ElementKind.CLASS) {
-                    error(element, "Event annotations can only be applied to classes!");
-                    return false;
+                     return false;
                 }
 
                 TypeElement typeElement = (TypeElement) element;
@@ -80,7 +80,11 @@ public class AttrackedProcessor extends AbstractProcessor {
         System.out.println("Done analyzing classes. Found " + classes.entrySet().size() + " annotated classes.");
 
         for (BindingClass bindingClass : classes.values()) {
-            bindingClass.writeToFiler(filer);
+            try {
+                bindingClass.writeToFiler(filer);
+            } catch (IOException e) {
+                messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+            }
         }
 
         return true;

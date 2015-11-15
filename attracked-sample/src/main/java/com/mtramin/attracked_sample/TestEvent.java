@@ -6,11 +6,11 @@ import com.mtramin.attracked.Event;
 /**
  * TODO: JAVADOC
  */
-@Event(name="test")
+@Event(name = "test")
 public class TestEvent {
-    @Attribute(name="one")
+    @Attribute(name = "one")
     String one;
 
-    @Attribute(name="two")
+    @Attribute(name = "two")
     String two;
 }

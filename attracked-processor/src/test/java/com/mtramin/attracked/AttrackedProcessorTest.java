@@ -16,7 +16,7 @@ public class AttrackedProcessorTest {
     @Test
     public void testProcessor() throws Exception {
         JavaFileObject sampleEventClass = JavaFileObjects.forSourceString("com.example.TestEvent",
-                "package com.mtramin.attracked_sample;\n" +
+                "package com.mtramin.attracked_test;\n" +
                         "\n" +
                         "import com.mtramin.attracked.Attribute;\n" +
                         "import com.mtramin.attracked.Event;\n" +

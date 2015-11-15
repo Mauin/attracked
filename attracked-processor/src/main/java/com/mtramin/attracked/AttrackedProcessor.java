@@ -98,7 +98,7 @@ public class AttrackedProcessor extends AbstractProcessor {
 
         String targetClass = typeElement.getQualifiedName().toString();
         String packageName = elementUtils.getPackageOf(typeElement).getQualifiedName().toString();
-        String className = targetClass.substring(packageName.length() + 1).replace('.', '$') + "$$Attracked";
+        String className = "Attracked" + targetClass.substring(packageName.length() + 1);
 
         bindingClass = new BindingClass(className, targetClass, packageName);
         return bindingClass;

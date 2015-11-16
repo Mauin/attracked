@@ -18,9 +18,9 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
 /**
- * TODO: JAVADOC
+ * Class representing data of an Event class
  */
-public class BindingClass {
+public class EventClass {
 
     private final String targetClass;
     private final String packageName;
@@ -28,7 +28,7 @@ public class BindingClass {
 
     private EventBinding binding;
 
-    public BindingClass(String className, String targetClass, String packageName) {
+    public EventClass(String className, String targetClass, String packageName) {
         this.className = className;
         this.targetClass = targetClass;
         this.packageName = packageName;

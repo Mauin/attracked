@@ -1,1 +1,9 @@
-<manifest package="com.mtramin.attracked"/>
+<manifest
+    package="com.mtramin.attracked"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <meta-data
+        android:name="io.fabric.ApiKey"
+        android:value="4dd4609ee8ce24674767de64fd050c4007073122" />
+
+</manifest>

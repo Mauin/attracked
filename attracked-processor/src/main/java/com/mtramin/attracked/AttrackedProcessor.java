@@ -57,7 +57,7 @@ public class AttrackedProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        Map<TypeElement, BindingClass> classes = new HashMap<>();
+        Map<TypeElement, EventClass> classes = new HashMap<>();
 
         for (Element element : roundEnv.getElementsAnnotatedWith(Event.class)) {
             try {
@@ -67,7 +67,7 @@ public class AttrackedProcessor extends AbstractProcessor {
                 }
 
                 TypeElement typeElement = (TypeElement) element;
-                BindingClass bindingClass = getOrCreateBinding(classes, typeElement);
+                EventClass bindingClass = getOrCreateBinding(classes, typeElement);
                 bindingClass.parseBindingData(typeElement);
 
                 classes.put(typeElement, bindingClass);
@@ -79,7 +79,7 @@ public class AttrackedProcessor extends AbstractProcessor {
 
         System.out.println("Done analyzing classes. Found " + classes.entrySet().size() + " annotated classes.");
 
-        for (BindingClass bindingClass : classes.values()) {
+        for (EventClass bindingClass : classes.values()) {
             try {
                 bindingClass.writeToFiler(filer);
             } catch (IOException e) {
@@ -90,8 +90,8 @@ public class AttrackedProcessor extends AbstractProcessor {
         return true;
     }
 
-    private BindingClass getOrCreateBinding(Map<TypeElement, BindingClass> classes, TypeElement typeElement) {
-        BindingClass bindingClass = classes.get(typeElement);
+    private EventClass getOrCreateBinding(Map<TypeElement, EventClass> classes, TypeElement typeElement) {
+        EventClass bindingClass = classes.get(typeElement);
         if (bindingClass != null) {
             return bindingClass;
         }
@@ -100,7 +100,7 @@ public class AttrackedProcessor extends AbstractProcessor {
         String packageName = elementUtils.getPackageOf(typeElement).getQualifiedName().toString();
         String className = "Attracked" + targetClass.substring(packageName.length() + 1);
 
-        bindingClass = new BindingClass(className, targetClass, packageName);
+        bindingClass = new EventClass(className, targetClass, packageName);
         return bindingClass;
     }
 

@@ -1,5 +1,7 @@
 package com.mtramin.attracked;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,11 @@ public class Attracked {
         }
 
         return instance;
+    }
+
+    public void registerCrashlyticsAnswers(Context context) {
+        FabricAnswersProvider crashlyticsProvider = new FabricAnswersProvider(context);
+        providers.add(crashlyticsProvider);
     }
 
     public void trackEvent(String name, Map<String, Object> data) {

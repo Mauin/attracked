@@ -10,7 +10,7 @@ import static com.google.common.truth.Truth.assert_;
 import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
 
 /**
- * TODO: JAVADOC
+ * Tests code generation of the Annotation processor
  */
 public class AttrackedProcessorTest {
     @Test

@@ -4,13 +4,13 @@ import com.mtramin.attracked.Attribute;
 import com.mtramin.attracked.Event;
 
 /**
- * TODO: JAVADOC
+ * Test event to track something with crashlytics
  */
 @Event(name = "test")
 public class TestEvent {
-    @Attribute(name = "one")
-    String one;
+    @Attribute(name = "hypelevel")
+    int hypelevel;
 
-    @Attribute(name = "two")
-    String two;
+    @Attribute(name = "wouldwedoitagain")
+    String yes;
 }

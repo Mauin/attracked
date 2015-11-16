@@ -12,11 +12,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Attracked.initialize();
+        Attracked
+                .initialize()
+                .registerCrashlyticsAnswers(this);
 
-        doSomething();
+        trackSomething();
     }
 
-    private void doSomething() {
+    private void trackSomething() {
+        AttrackedTestEvent.trackTest("yes", 9001);
     }
 }

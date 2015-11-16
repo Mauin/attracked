@@ -4,7 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
 /**
- * TODO: JAVADOC
+ * Tracking event attribute
  */
 @Target(ElementType.FIELD)
 public @interface Attribute {

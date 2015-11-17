@@ -58,17 +58,21 @@ public class EventClass {
     }
 
     private MethodSpec writeTrackObjectMethod() {
-        String methodName = "track" + binding.name.substring(0, 1).toUpperCase() + binding.name.substring(1);
-        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName)
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(void.class);
-
-        // TODO actually do something
-
-        return methodBuilder.build();
+        return createBaseAnalyticsMethod()
+                .addParameter(TypeName.get(binding.type), "eventData")
+                .build();
     }
 
     private MethodSpec writeAnalyticsMethod() {
+        MethodSpec.Builder baseAnalyticsMethod = createBaseAnalyticsMethod();
+        for (Map.Entry<String, AnnotatedField> entry : binding.annotatedFields.entrySet()) {
+            baseAnalyticsMethod.addParameter(TypeName.get(entry.getValue().type), entry.getValue().parameterName);
+        }
+
+        return baseAnalyticsMethod.build();
+    }
+
+    private MethodSpec.Builder createBaseAnalyticsMethod() {
         String methodName = "track" + binding.name.substring(0, 1).toUpperCase() + binding.name.substring(1);
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -76,33 +80,37 @@ public class EventClass {
 
         methodBuilder.addStatement("$T<String, Object> data = new $T<>()", Map.class, HashMap.class);
 
-        for (Map.Entry<String, TypeMirror> entry : binding.attributes.entrySet()) {
-            methodBuilder.addParameter(TypeName.get(entry.getValue()), entry.getKey());
-            methodBuilder.addStatement("data.put($S, $L)", entry.getKey(), entry.getKey());
+        for (Map.Entry<String, AnnotatedField> entry : binding.annotatedFields.entrySet()) {
+            methodBuilder.addStatement("data.put($S, $N)", entry.getValue().parameterName, entry.getValue().parameterName);
         }
 
         ClassName attracked = ClassName.get("com.mtramin.attracked", "Attracked");
         methodBuilder.addStatement("$T.getInstance().trackEvent($S, data)", attracked, binding.name);
 
-        return methodBuilder.build();
+        return methodBuilder;
     }
 
+
     private MethodSpec emptyConstructor() {
-        return MethodSpec.constructorBuilder().build();
+        return MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+                .build();
     }
 
     private class EventBinding {
+        private TypeMirror type;
         private String name;
-        private Map<String, TypeMirror> attributes;
+        private Map<String, AnnotatedField> annotatedFields;
 
         public EventBinding(TypeElement element) {
             Event annotation = element.getAnnotation(Event.class);
 
+            this.type = element.asType();
             this.name = annotation.name();
-            attributes = new HashMap<>();
+            annotatedFields = new HashMap<>();
 
             parseAnnotatedFields(element);
-            System.out.println("have attributes " + attributes.size());
+            System.out.println("have annotatedFields " + annotatedFields.size());
         }
 
         private void parseAnnotatedFields(TypeElement element) {
@@ -121,7 +129,17 @@ public class EventClass {
                 return;
             }
 
-            this.attributes.put(attributeAnnotation.name(), enclosed.asType());
+            this.annotatedFields.put(enclosed.getSimpleName().toString(), new AnnotatedField(attributeAnnotation.name(), enclosed.asType()));
+        }
+    }
+
+    private class AnnotatedField {
+        private final String parameterName;
+        private final TypeMirror type;
+
+        public AnnotatedField(String parameterName, TypeMirror type) {
+            this.parameterName = parameterName;
+            this.type = type;
         }
     }
 }

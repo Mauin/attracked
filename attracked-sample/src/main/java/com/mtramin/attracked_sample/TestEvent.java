@@ -9,7 +9,7 @@ import com.mtramin.attracked.Event;
 @Event(name = "test")
 public class TestEvent {
     @Attribute(name = "hypelevel")
-    int hypelevel;
+    double hypelevel;
 
     @Attribute(name = "wouldwedoitagain")
     String yes;

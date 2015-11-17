@@ -1,19 +1,21 @@
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.20.1'
-    }
-}
-
 apply plugin: 'com.android.library'
 
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
+preBuild.doFirst {
+    // TODO correct this
+    File fabricProperties = file('../attracked-sample/fabric.properties');
 
+    if (fabricProperties.exists()) {
+        Properties props = new Properties();
+        props.load(fabricProperties.newDataInputStream());
+
+        String apiKey = props.getProperty('apiKey');
+        if (apiKey == null || apiKey.isEmpty()) {
+            throw new GradleException("fabric.properties file is missing apiKey property. Add your Fabric apiKey to the file.");
+        }
+    } else {
+        throw new GradleException("Missing fabric.properties. Create a fabric.properties file in the base folder of your app and insert your Fabric API-Key into it.");
+    }
+}
 
 android {
     compileSdkVersion 23
@@ -29,6 +31,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+}
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 dependencies {
